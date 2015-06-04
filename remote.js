@@ -1,11 +1,30 @@
 var http = require('http');
 
-
 address=process.argv[process.argv.length - 2];
 port=process.argv[process.argv.length - 1];
 
+var eventDispatch = {
+  'add': function(event, file, sha1) {
+    console.log("Added file " + file + " with checksum " + sha1);
+  },
+  'unlink': function(event, file, sha1) {
+    console.log("Unlinked file " + file);
+  },
+  'change': function(event, file, sha1) {
+    console.log("Changed file " + file + " with checksum " + sha1);
+  },
+  'addDir': function(event, dir, sha1) {
+    console.log("Created directory " + dir);
+  },
+  'unlinkDir': function(event, dir, sha1) {
+    console.log("Unlinked directory " + dir);
+  },
+  'default': function(event, file, sha1) {
+    console.log('Unknown event occurred ' + event + ' on ' + file);
+  },
+};
+
 http.createServer(function(request,response){
-  console.log(request.headers);
   var req = "";
 
   request.on('data', function(chunk) {
@@ -13,8 +32,14 @@ http.createServer(function(request,response){
   });
 
   request.on('end', function() {
-    console.log('there will be no more data.');
-    console.log(req);
+    var reqObj = JSON.parse(req);
+    var dispatchKey = reqObj["event"];
+
+    if (!(dispatchKey in eventDispatch)) {
+      dispatchKey = 'default';
+    }
+
+    eventDispatch[dispatchKey](reqObj['event'], reqObj['file'], reqObj['checkSum']);
   });
 
   response.writeHead(200, {'Content-Type': 'application/json'});
