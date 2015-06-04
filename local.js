@@ -1,12 +1,10 @@
 var chokidar = require('chokidar');
 var utils = require('./utils');
 
-localPath=process.argv[process.argv.length - 2];
-sharedPath=process.argv[process.argv.length - 1];
-
+path=process.argv[process.argv.length - 1];
 
 chokidar.watch(
-  localPath,
+  path,
   { ignored: /[\/\\]\./, ignoreInitial: true}
 ).on('all', function(event, path) {
     utils.calcHash(path, function(error, sha1) {
@@ -15,7 +13,7 @@ chokidar.watch(
           console.log('missing file');
         }
       } else {
-        sharedFile=path.replace(localPath, sharedPath);
+        sharedFile=path.replace(path, '');
         console.log(event, sharedFile, sha1);
       }
     });
