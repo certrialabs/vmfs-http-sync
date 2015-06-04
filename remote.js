@@ -40,24 +40,37 @@ var mkDir = function(dir) {
   });
 }
 
+var unlink = function(file, type) {
+  var dst = destDir + '/' + file;
+  fs.remove(dst, function(err) {
+    if (err) {
+      console.log('[-] Unabled to create ' + dst + ' ' + type);
+    } else {
+      console.log('[+] ' + type + ' ' + dst + ' unlinked');
+    }
+  });
+}
+
 var eventDispatch = {
   'add': function(event, file, sha1) {
     console.log('[.] add event received for ' + sharedDir + '/' + file );
     copyFile(file, sha1);
   },
   'unlink': function(event, file, sha1) {
-    console.log("Unlinked file " + file);
+    console.log('[.] unlink event receiced for ' + sharedDir + '/' + file);
+    unlink(file, 'File');
   },
   'change': function(event, file, sha1) {
     console.log('[.] change event received for ' + sharedDir + '/' + file);
     copyFile(file, sha1);
   },
   'addDir': function(event, dir, sha1) {
-    console.log('addDir event received for  ' + sharedDir + '/' + dir);
+    console.log('[.] addDir event received for  ' + sharedDir + '/' + dir);
     mkDir(dir);
   },
   'unlinkDir': function(event, dir, sha1) {
-    console.log("Unlinked directory " + dir);
+    console.log('[.] unlinkDir event received for ' + sharedDir + '/' + dir);
+    unlink(dir, 'Directory');
   },
   'default': function(event, file, sha1) {
     console.log('[-] unknown event received ' + event + ' on ' + file);
