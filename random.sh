@@ -2,10 +2,10 @@
 # Created by Ben Okopnik on Wed Jul 16 18:04:33 EDT 2008
 
 ########    User settings     ############
-MAXDIRS=5
-MAXDEPTH=2
-MAXFILES=10
-MAXSIZE=1000
+MAXDIRS=100
+MAXDEPTH=7
+MAXFILES=100
+MAXSIZE=100
 ######## End of user settings ############
 
 # How deep in the file system are we now?
@@ -29,7 +29,7 @@ populate() {
 	for n in `seq $files`
 	do
 		f=`mktemp f.XXXXXX`
-		size=$(($RANDOM*$MAXSIZE/32767))
+		size=$(($RANDOM*$MAXSIZE/32767+1))
 		head -c $size /dev/urandom > $f
     delete_if $f 4;
 	done
