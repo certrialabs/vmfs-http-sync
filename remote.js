@@ -60,7 +60,7 @@ var eventDispatch = {
     console.log("Unlinked directory " + dir);
   },
   'default': function(event, file, sha1) {
-    console.log('Unknown event occurred ' + event + ' on ' + file);
+    console.log('[-] unknown event received ' + event + ' on ' + file);
   },
 };
 
