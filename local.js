@@ -1,5 +1,6 @@
 var chokidar = require('chokidar');
 var http = require('http');
+var fs = require('fs')
 
 var utils = require('./utils');
 
@@ -43,14 +44,25 @@ chokidar.watch(
   path,
   { ignored: /[\/\\]\./, ignoreInitial: true}
 ).on('all', function(event, file) {
-  utils.calcHash(file, function(error, sha1) {
-    if (error != null) {
-      if (error.code == 1) {
-        console.log('missing file');
-      }
-    } else {
-      sharedFile=file.replace(path, '');
-      sendChange(event, sharedFile, sha1, null);
+  sharedFile=file.replace(path, '');
+  fs.stat(file, function(err, stats) {
+    // Just send event directly to the remote machine for missing files
+    if (err && err.code === 'ENOENT') {
+      sendChange(event, sharedFile, null, null);
+      return;
     }
-  });
+    if(stats.isFile()) {
+      utils.calcHash(file, function(error, sha1) {
+        if (error != null) {
+          if (error.code == 1) {
+            console.log('missing file');
+          }
+        } else {
+          sendChange(event, sharedFile, sha1, null);
+        }
+      });
+    } else {
+      sendChange(event, sharedFile, null, null);
+    }
+  })
 });
