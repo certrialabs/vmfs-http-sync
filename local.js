@@ -44,7 +44,7 @@ chokidar.watch(
   path,
   { ignored: /[\/\\]\./, ignoreInitial: true}
 ).on('all', function(event, file) {
-  sharedFile=file.replace(path, '');
+  var sharedFile=file.replace(path, '');
   fs.stat(file, function(err, stats) {
     // Just send event directly to the remote machine for missing files
     if (err && err.code === 'ENOENT') {
