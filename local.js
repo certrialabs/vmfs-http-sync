@@ -1,6 +1,7 @@
 var chokidar = require('chokidar');
 var http = require('http');
 var fs = require('fs')
+var winston = require('winston');
 
 var utils = require('./utils');
 
@@ -23,7 +24,7 @@ var generateChange = function(file, retry) {
       return;
     }
     if (err) {
-      console.log('[-] unexpected error occured ' + JSON.stringify(err));
+      winston.error('unexpected error occured ' + JSON.stringify(err));
       return;
     }
     if(stats.isFile()) {
@@ -38,7 +39,7 @@ var generateChange = function(file, retry) {
 
 var sendChange = function(event, file, retry, checkSum) {
   if (retry === max_retries) {
-    console.log('[-] unabled to syncronize ' + file + ' retried ' + retry + ' times.');
+    winston.error('unabled to syncronize ' + file + ' retried ' + retry + ' times.');
     return;
   }
   var options = {
@@ -59,9 +60,10 @@ var sendChange = function(event, file, retry, checkSum) {
 
     res.on('end', function () {
       if (data["code"] === 406) {
+        winston.warn('error occured while syncing ' + file ' ' + data);
         generateChange(file, retry + 1);
       } else {
-        console.log('[+] successful response received ' + data);
+        winston.debug('successful response received ' + data);
       }
     });
   });

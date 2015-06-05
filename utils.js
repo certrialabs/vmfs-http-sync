@@ -14,7 +14,6 @@ module.exports = {
     });
 
     fd.on('error', function(err) {
-      console.log('[-] unable to calculate hash for' + filename + '.' + JSON.stringify(err));
       callback({ code: 1, message: 'calculation error'}, null);
     });
 

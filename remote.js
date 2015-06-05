@@ -2,6 +2,8 @@ var http = require('http');
 var fs = require('fs-extra');
 var utils= require('./utils');
 
+var winston = require('winston');
+
 var SUCCESS_CODE=200;
 var ERROR_CODE=406;
 
@@ -20,25 +22,25 @@ var copyFile = function(file, sha1, responseObject) {
   var src = sharedDir + '/' + file;
   utils.calcHash(src, function(err, calcHash) {
     if (err) {
-      console.log('[-] Unable to calculate checksum ' + JSON.stringify(err));
+      winston.warn('unable to calculate checksum ' + JSON.stringify(err));
       respond(responseObject, ERROR_CODE, 'unabled to calculate checksum for ' + file);
       return;
     }
     if (sha1 != calcHash) {
-      console.log('[-] File Version Missmatch');
+      winston.warn('file Version Missmatch');
       respond(responseObject, ERROR_CODE, 'file version missmatch for ' + file);
       return;
     }
     var dst = destDir + '/' + file;
-    console.log('[.] Coping File ' + src + ' to ' + dst);
+    winston.debug('coping File ' + src + ' to ' + dst);
     fs.copy(src, dst, function(err) {
       if (err) {
-        console.log('[-] ' + err);
+        winston.warn(err);
         respond(responseObject, ERROR_CODE, JSON.stringify(err));
         return;
       }
 
-      console.log('[+] File ' + src + ' copied to ' + dst);
+      winston.debug('file ' + src + ' copied to ' + dst);
       respond(responseObject, SUCCESS_CODE, 'File ' + src + ' copied to ' + dst);
     });
   });
@@ -48,10 +50,10 @@ var mkDir = function(dir, responseObject) {
   var dst = destDir + '/' + dir;
   fs.mkdirs(dst, function(err) {
     if (err) {
-      console.log('[-] Unable to create ' + dst + ' directory');
+      winston.warn('unable to create ' + dst + ' directory');
       respond(responseObject, ERROR_CODE, 'unabled to create ' + dst + ' directory');
     } else {
-      console.log('[+] Directory ' + dst + ' created');
+      winston.debug('directory ' + dst + ' created');
       respond(responseObject, SUCCESS_CODE, 'directory ' + dst + ' created');
     }
   });
@@ -61,10 +63,10 @@ var unlink = function(file, type, responseObject) {
   var dst = destDir + '/' + file;
   fs.remove(dst, function(err) {
     if (err) {
-      console.log('[-] Unabled to unlink ' + dst + ' ' + type);
+      winston.warn('unabled to unlink ' + dst + ' ' + type);
       respond(responseObject, ERROR_CODE, 'unabled to unlink ' + dst + ' ' + type);
     } else {
-      console.log('[+] ' + type + ' ' + dst + ' unlinked');
+      winston.debug(type + ' ' + dst + ' unlinked');
       respond(responseObject, SUCCESS_CODE, type + ' ' + dst + ' unlinked');
     }
   });
@@ -72,19 +74,19 @@ var unlink = function(file, type, responseObject) {
 
 var eventDispatch = {
   'unlink': function(event, file, sha1, responseObject) {
-    console.log('[.] unlink event receiced for ' + sharedDir + '/' + file);
+    winston.debug('unlink event receiced for ' + sharedDir + '/' + file);
     unlink(file, 'File', responseObject);
   },
   'copy': function(event, file, sha1, responseObject) {
-    console.log('[.] copy event received for ' + sharedDir + '/' + file);
+    winston.debug('copy event received for ' + sharedDir + '/' + file);
     copyFile(file, sha1, responseObject);
   },
   'addDir': function(event, dir, sha1, responseObject) {
-    console.log('[.] addDir event received for  ' + sharedDir + '/' + dir);
+    winston.debug('addDir event received for  ' + sharedDir + '/' + dir);
     mkDir(dir, responseObject);
   },
   'default': function(event, file, sha1, responseObject) {
-    console.log('[-] unknown event received ' + event + ' on ' + file);
+    winston.warn('unknown event received ' + event + ' on ' + file);
     respond(responseObject, 406, 'unkownd event');
   },
 };
@@ -92,12 +94,12 @@ var eventDispatch = {
 //Clean destDirecotry first
 fs.remove(destDir, function(err) {
   if (err) {
-    console.log(err);
+    winston.error(err);
     return 1;
   }
   fs.copy(sharedDir, destDir, function(err) {
     if (err) {
-      console.log('[-] ' + err);
+      winston.error(err);
       return 1;
     }
     http.createServer(function(request, response){
@@ -120,6 +122,6 @@ fs.remove(destDir, function(err) {
 
     }).listen(port, address);
 
-    console.log("[.] Server is listening to http://" + address + ":" + port);
+    winston.info("server is listening to http://" + address + ":" + port);
   });
 })
