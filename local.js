@@ -8,35 +8,39 @@ server_address=process.argv[process.argv.length - 3];
 server_port=process.argv[process.argv.length -2];
 path=process.argv[process.argv.length - 1];
 
+max_retries=5;
+
 // We don't really need filesystem events.
 // We just need to state be able to produce the same state as on monitored direcotry.
 // Unlink doesn't really care if it is directory or file.
 // Changed doesnt really care if the file is changed or just craeted.
-var generateChange = function(file) {
+var generateChange = function(file, retry) {
   var sharedFile=file.replace(path, '');
   fs.stat(file, function(err, stats) {
     // Just send event directly to the remote machine for missing files
     if (err && err.code === 'ENOENT') {
-      sendChange('unlink', sharedFile, null, null);
+      sendChange('unlink', sharedFile, retry, null);
+      return;
+    }
+    if (err) {
+      console.log('[-] unexpected error occured ' + JSON.stringify(err));
       return;
     }
     if(stats.isFile()) {
       utils.calcHash(file, function(error, sha1) {
-        if (error != null) {
-          if (error.code == 1) {
-            console.log('[-] missing file ' + file);
-          }
-        } else {
-          sendChange('copy', sharedFile, sha1, null);
-        }
+        sendChange('copy', sharedFile, retry, sha1);
       });
     } else {
-      sendChange('addDir', sharedFile, null, null);
+      sendChange('addDir', sharedFile, retry, null);
     }
   })
 }
 
-var sendChange = function(event, file, checkSum, callback) {
+var sendChange = function(event, file, retry, checkSum) {
+  if (retry === max_retries) {
+    console.log('[-] unabled to syncronize ' + file + ' retried ' + retry + ' times.');
+    return;
+  }
   var options = {
     host: server_address,
     port: server_port,
@@ -52,8 +56,13 @@ var sendChange = function(event, file, checkSum, callback) {
     res.on('data', function (chunk) {
       data+=chunk;
     });
-    res.on('end', function (chunk) {
-      console.log('response received ' + data);
+
+    res.on('end', function () {
+      if (data["code"] === 406) {
+        generateChange(file, retry + 1);
+      } else {
+        console.log('[+] successful response received ' + data);
+      }
     });
   });
 
