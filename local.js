@@ -60,7 +60,7 @@ var sendChange = function(event, file, retry, checkSum) {
 
     res.on('end', function () {
       if (data["code"] === 406) {
-        winston.warn('error occured while syncing ' + file ' ' + data);
+        winston.warn('error occured while syncing ' + file + ' ' + data);
         generateChange(file, retry + 1);
       } else {
         winston.debug('successful response received ' + data);
