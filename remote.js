@@ -71,25 +71,17 @@ var unlink = function(file, type, responseObject) {
 }
 
 var eventDispatch = {
-  'add': function(event, file, sha1, responseObject) {
-    console.log('[.] add event received for ' + sharedDir + '/' + file );
-    copyFile(file, sha1, responseObject);
-  },
   'unlink': function(event, file, sha1, responseObject) {
     console.log('[.] unlink event receiced for ' + sharedDir + '/' + file);
     unlink(file, 'File', responseObject);
   },
-  'change': function(event, file, sha1, responseObject) {
-    console.log('[.] change event received for ' + sharedDir + '/' + file);
+  'copy': function(event, file, sha1, responseObject) {
+    console.log('[.] copy event received for ' + sharedDir + '/' + file);
     copyFile(file, sha1, responseObject);
   },
   'addDir': function(event, dir, sha1, responseObject) {
     console.log('[.] addDir event received for  ' + sharedDir + '/' + dir);
     mkDir(dir, responseObject);
-  },
-  'unlinkDir': function(event, dir, sha1, responseObject) {
-    console.log('[.] unlinkDir event received for ' + sharedDir + '/' + dir);
-    unlink(dir, 'Directory', responseObject);
   },
   'default': function(event, file, sha1, responseObject) {
     console.log('[-] unknown event received ' + event + ' on ' + file);
