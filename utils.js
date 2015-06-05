@@ -15,7 +15,7 @@ module.exports = {
 
     fd.on('error', function(err) {
       console.log('[-] unable to calculate hash for' + filename + '.' + JSON.stringify(err));
-      callback({ code: 1, message: 'missing file'}, null);
+      callback({ code: 1, message: 'calculation error'}, null);
     });
 
     // read all file and pipe it (write it) to the hash object
