@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs = require('graceful-fs-extra');
 var crypto = require('crypto');
 
 module.exports = {

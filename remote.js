@@ -1,9 +1,9 @@
 var http = require('http');
-var fs = require('fs-extra');
+var fs = require('graceful-fs-extra');
 var utils= require('./utils');
 
 var winston = require('winston');
-winston.level = 'error';
+winston.level = 'warn';
 
 address=process.argv[process.argv.length - 4];
 port=process.argv[process.argv.length - 3];

@@ -1,6 +1,6 @@
 var chokidar = require('chokidar');
 var http = require('http');
-var fs = require('fs')
+var fs = require('graceful-fs-extra')
 var winston = require('winston');
 
 winston.level = 'error';
