@@ -9,7 +9,7 @@ server_address=process.argv[process.argv.length - 3];
 server_port=process.argv[process.argv.length -2];
 path=process.argv[process.argv.length - 1];
 
-max_retries=5;
+max_retries=1;
 
 // We don't really need filesystem events.
 // We just need to state be able to produce the same state as on monitored direcotry.
@@ -38,7 +38,7 @@ var generateChange = function(file, retry) {
 }
 
 var sendChange = function(event, file, retry, checkSum) {
-  if (retry === max_retries) {
+  if (retry > max_retries) {
     winston.error('unabled to syncronize ' + file + ' retried ' + retry + ' times.');
     return;
   }
@@ -83,5 +83,5 @@ chokidar.watch(
   path,
   { ignored: /[\/\\]\./, ignoreInitial: true}
 ).on('all', function(event, file) {
-  generateChange(file);
+  generateChange(file, 0);
 });
