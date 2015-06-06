@@ -3,6 +3,7 @@ var fs = require('fs-extra');
 var utils= require('./utils');
 
 var winston = require('winston');
+winston.level = 'error';
 
 address=process.argv[process.argv.length - 4];
 port=process.argv[process.argv.length - 3];

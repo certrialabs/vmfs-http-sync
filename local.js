@@ -3,6 +3,8 @@ var http = require('http');
 var fs = require('fs')
 var winston = require('winston');
 
+winston.level = 'error';
+
 var utils = require('./utils');
 
 server_address=process.argv[process.argv.length - 3];
