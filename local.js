@@ -16,8 +16,9 @@ max_retries=1;
 // Unlink doesn't really care if it is directory or file.
 // Changed doesnt really care if the file is changed or just craeted.
 var generateChange = function(file, retry) {
-  var sharedFile=file.replace(path, '');
-  fs.stat(file, function(err, stats) {
+  var localFile = path + '/' + file;
+  var sharedFile = file;
+  fs.stat(localFile, function(err, stats) {
     // Just send event directly to the remote machine for missing files
     if (err && err.code === 'ENOENT') {
       sendChange('unlink', sharedFile, retry, null);
@@ -27,8 +28,10 @@ var generateChange = function(file, retry) {
       winston.error('unexpected error occured ' + JSON.stringify(err));
       return;
     }
+
+    winston.debug('stats for ' + file + ' are ' + JSON.stringify(stats));
     if(stats.isFile()) {
-      utils.calcHash(file, function(error, sha1) {
+      utils.calcHash(localFile, function(error, sha1) {
         sendChange('copy', sharedFile, retry, sha1);
       });
     } else {
@@ -38,6 +41,7 @@ var generateChange = function(file, retry) {
 }
 
 var sendChange = function(event, file, retry, checkSum) {
+  winston.debug('sending ' + event + ' for ' + file + ' retried ' + retry);
   if (retry > max_retries) {
     winston.error('unabled to syncronize ' + file + ' retried ' + retry + ' times.');
     return;
@@ -83,5 +87,6 @@ chokidar.watch(
   path,
   { ignored: /[\/\\]\./, ignoreInitial: true}
 ).on('all', function(event, file) {
-  generateChange(file, 0);
+  var sharedFile=file.replace(path, '');
+  generateChange(sharedFile, 0);
 });

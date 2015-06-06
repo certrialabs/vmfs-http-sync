@@ -24,7 +24,7 @@ var copyFile = function(file, sha1, responseObject) {
       return;
     }
     if (sha1 != calcHash) {
-      winston.warn('file Version Missmatch');
+      winston.warn('file version missmatch received ' + sha1 + ' expected ' + calcHash);
       respond(responseObject, utils.ERROR_CODE, 'file version missmatch for ' + file);
       return;
     }
