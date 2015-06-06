@@ -20,5 +20,7 @@ module.exports = {
     // read all file and pipe it (write it) to the hash object
     fd.pipe(hash);
   },
+  SUCCESS_CODE: 200,
+  ERROR_CODE: 406,
 };
 

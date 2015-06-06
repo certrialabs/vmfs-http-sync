@@ -4,9 +4,6 @@ var utils= require('./utils');
 
 var winston = require('winston');
 
-var SUCCESS_CODE=200;
-var ERROR_CODE=406;
-
 address=process.argv[process.argv.length - 4];
 port=process.argv[process.argv.length - 3];
 sharedDir=process.argv[process.argv.length -2];
@@ -23,12 +20,12 @@ var copyFile = function(file, sha1, responseObject) {
   utils.calcHash(src, function(err, calcHash) {
     if (err) {
       winston.warn('unable to calculate checksum ' + JSON.stringify(err));
-      respond(responseObject, ERROR_CODE, 'unabled to calculate checksum for ' + file);
+      respond(responseObject, utils.ERROR_CODE, 'unabled to calculate checksum for ' + file);
       return;
     }
     if (sha1 != calcHash) {
       winston.warn('file Version Missmatch');
-      respond(responseObject, ERROR_CODE, 'file version missmatch for ' + file);
+      respond(responseObject, utils.ERROR_CODE, 'file version missmatch for ' + file);
       return;
     }
     var dst = destDir + '/' + file;
@@ -36,12 +33,12 @@ var copyFile = function(file, sha1, responseObject) {
     fs.copy(src, dst, function(err) {
       if (err) {
         winston.warn(err);
-        respond(responseObject, ERROR_CODE, JSON.stringify(err));
+        respond(responseObject, utils.ERROR_CODE, JSON.stringify(err));
         return;
       }
 
       winston.debug('file ' + src + ' copied to ' + dst);
-      respond(responseObject, SUCCESS_CODE, 'File ' + src + ' copied to ' + dst);
+      respond(responseObject, utils.SUCCESS_CODE, 'File ' + src + ' copied to ' + dst);
     });
   });
 }
@@ -51,10 +48,10 @@ var mkDir = function(dir, responseObject) {
   fs.mkdirs(dst, function(err) {
     if (err) {
       winston.warn('unable to create ' + dst + ' directory');
-      respond(responseObject, ERROR_CODE, 'unabled to create ' + dst + ' directory');
+      respond(responseObject, utils.ERROR_CODE, 'unabled to create ' + dst + ' directory');
     } else {
       winston.debug('directory ' + dst + ' created');
-      respond(responseObject, SUCCESS_CODE, 'directory ' + dst + ' created');
+      respond(responseObject, utils.SUCCESS_CODE, 'directory ' + dst + ' created');
     }
   });
 }
@@ -64,10 +61,10 @@ var unlink = function(file, type, responseObject) {
   fs.remove(dst, function(err) {
     if (err) {
       winston.warn('unabled to unlink ' + dst + ' ' + type);
-      respond(responseObject, ERROR_CODE, 'unabled to unlink ' + dst + ' ' + type);
+      respond(responseObject, utils.ERROR_CODE, 'unabled to unlink ' + dst + ' ' + type);
     } else {
       winston.debug(type + ' ' + dst + ' unlinked');
-      respond(responseObject, SUCCESS_CODE, type + ' ' + dst + ' unlinked');
+      respond(responseObject, utils.SUCCESS_CODE, type + ' ' + dst + ' unlinked');
     }
   });
 }
@@ -87,7 +84,7 @@ var eventDispatch = {
   },
   'default': function(event, file, sha1, responseObject) {
     winston.warn('unknown event received ' + event + ' on ' + file);
-    respond(responseObject, 406, 'unkownd event');
+    respond(responseObject, utils.ERROR_CODE, 'unkownd event');
   },
 };
 
