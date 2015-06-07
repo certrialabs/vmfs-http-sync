@@ -91,4 +91,6 @@ chokidar.watch(
 ).on('all', function(event, file) {
   var sharedFile=file.replace(path, '');
   generateChange(sharedFile, 0);
+}).on('error', function(err) {
+  winston.error('unexpected error occured ' + JSON.stringify(err));
 });
