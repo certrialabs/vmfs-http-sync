@@ -1,0 +1,38 @@
+{
+  "name": "vmfs-http-sync",
+  "version": "0.1.0",
+  "description": "Node implementation for host to vm filesystem synchronisation",
+  "main": "bin/vmfs-http-sync.js",
+  "bin": {
+    "vmfs-http-sync": "bin/vmfs-http-sync.js"
+  },
+  "dependencies": {
+    "chokidar": "^1.0.3",
+    "graceful-fs-extra": "^1.0.6",
+    "winston": "^1.0.0",
+    "yargs": "^3.10.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elsix/vmfs-http-sync.git"
+  },
+  "keywords": [
+    "cross-platform",
+    "development",
+    "environment",
+    "fs",
+    "filesystem",
+    "watcher",
+    "synchronizer"
+  ],
+  "author": "Kiril Kalchev <kiril.kalchev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elsix/vmfs-http-sync/issues"
+  },
+  "homepage": "https://github.com/elsix/vmfs-http-sync"
+}
