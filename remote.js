@@ -5,12 +5,13 @@ var path = require('path');
 
 var utils= require('./utils');
 
-winston.level = 'warn';
 
-address=process.argv[process.argv.length - 4];
-port=process.argv[process.argv.length - 3];
-sharedDir=process.argv[process.argv.length -2];
-destDir=process.argv[process.argv.length - 1];
+var address=process.argv[process.argv.length - 4];
+var port=process.argv[process.argv.length - 3];
+var sharedDir=process.argv[process.argv.length -2];
+var destDir=process.argv[process.argv.length - 1];
+
+winston.level = 'warn';
 
 var respond = function(responseObject, code, message) {
   responseObject.writeHead(code, {'Content-Type': 'application/json'});

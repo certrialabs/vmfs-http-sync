@@ -6,13 +6,14 @@ var path = require('path');
 
 var utils = require('./utils');
 
+
+var server_address=process.argv[process.argv.length - 3];
+var server_port=process.argv[process.argv.length -2];
+var fspath=process.argv[process.argv.length - 1];
+
+var max_retries=1;
+
 winston.level = 'error';
-
-server_address=process.argv[process.argv.length - 3];
-server_port=process.argv[process.argv.length -2];
-fspath=process.argv[process.argv.length - 1];
-
-max_retries=1;
 
 // We don't really need filesystem events.
 // We just need to state be able to produce the same state as on monitored direcotry.
