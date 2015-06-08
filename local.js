@@ -2,14 +2,15 @@ var chokidar = require('chokidar');
 var http = require('http');
 var fs = require('graceful-fs-extra')
 var winston = require('winston');
-
-winston.level = 'error';
+var path = require('path');
 
 var utils = require('./utils');
 
+winston.level = 'error';
+
 server_address=process.argv[process.argv.length - 3];
 server_port=process.argv[process.argv.length -2];
-path=process.argv[process.argv.length - 1];
+fspath=process.argv[process.argv.length - 1];
 
 max_retries=1;
 
@@ -18,7 +19,7 @@ max_retries=1;
 // Unlink doesn't really care if it is directory or file.
 // Changed doesnt really care if the file is changed or just craeted.
 var generateChange = function(file, retry) {
-  var localFile = path + '/' + file;
+  var localFile = path.join(fspath, file);
   var sharedFile = file;
   fs.stat(localFile, function(err, stats) {
     // Just send event directly to the remote machine for missing files
@@ -86,10 +87,10 @@ var sendChange = function(event, file, retry, checkSum) {
 };
 
 chokidar.watch(
-  path,
+  fspath,
   { ignored: /[\/\\]\./, ignoreInitial: true}
 ).on('all', function(event, file) {
-  var sharedFile=file.replace(path, '');
+  var sharedFile=file.replace(fspath, '');
   generateChange(sharedFile, 0);
 }).on('error', function(err) {
   winston.error('unexpected error occured ' + JSON.stringify(err));
