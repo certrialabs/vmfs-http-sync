@@ -9,6 +9,7 @@
   "dependencies": {
     "chokidar": "^1.0.3",
     "graceful-fs-extra": "^1.0.6",
+    "walk": "^2.3.9",
     "winston": "^1.0.0",
     "yargs": "^3.10.0"
   },
