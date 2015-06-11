@@ -3,7 +3,7 @@
 var winston = require('../lib/utils').winston;
 
 var defaults = {
-  logLevel: 'error',
+  logLevel: 'info',
   retries: 1,
 };
 
