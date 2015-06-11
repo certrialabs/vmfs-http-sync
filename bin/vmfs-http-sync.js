@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var winston = require('../lib/utils').winston;
+
 var defaults = {
   logLevel: 'error',
   retries: 1,
@@ -60,11 +62,13 @@ if (env === 'server' && argv.retries != defaults.retries) {
 var destDir = argv.destDir;
 var logLevel = argv.logLevel;
 
+winston.level = logLevel;
+
 if (env === 'server') {
   var serverModule = require('../lib/server');
-  serverModule.start(server, port, sharedDir, destDir, logLevel);
+  serverModule.start(server, port, sharedDir, destDir);
 } else if(env === 'watcher') {
   var watcherModule = require('../lib/watcher');
-  watcherModule.start(server, port, sharedDir, argv.retries, logLevel)
+  watcherModule.start(server, port, sharedDir, argv.retries)
 }
 
