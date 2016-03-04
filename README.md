@@ -32,4 +32,5 @@ TODO
 Detailed help
 
 ## Licence
-MIT
+vmfs-http-sync is licensed under the
+[MIT License](https://github.com/elsix/angular-jointjs-graph/blob/dev/LICENSE).
