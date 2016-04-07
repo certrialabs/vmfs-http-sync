@@ -28,8 +28,40 @@ vmfs-http-sync watcher --server <server-address> --port 50080 --sharedDir $HOME/
 And after a few seconds you must have a perfectly syncronized local copy of your ```$HOME/repos``` into ```/home/myuser/repos_local/``` on your remote server. 
 
 ## Usage
-TODO
-Detailed help
+```
+Usage:  vmfs-http-sync  <mode> [options]
+
+<mode>: Mode in which script will be executed. Options are server or watcher.
+Server mode means, it will accept filesystem events over http.
+Watcher mode means, it will monitor the given directory and will send events to
+the server.
+
+Options:
+  -s, --server  In server mode it is the listening address of the server.
+                In watcher mode it is the IP address of the remote
+                vmfs-http-sync server.
+  -p, --port    In server it is the listening port of the server.
+                In watcher mode it is the port of the remote vmfs-http-sync
+                server.
+  --sharedDir   In server mode it is a local mount point of the shared directory
+                from which files will be copied.
+                In watcher mode it is a local mount point of the shared storage
+                in which we are listening for events.
+  --destDir     In server mode it is destination directory that needs to stay in
+                sync.
+                In watcher mode does noting
+  --logLevel    Just sets the log level.
+                Its default value is info and you should be OK if you are not
+                troubleshooting anything. For more extensive logging you can use
+                debug log level.                               [default: "info"]
+  --retries     In server mode this set how many times server will try to sync
+                file between the shared directory and the local copy.
+                It is useful if you are changing a single file too, this option
+                will make the server to wait till writing is complete.
+                Its default value is 1 and it works great for us till now, but
+                it depends on your use cases.                       [default: 1]
+  -h, --help    Show help                                              [boolean]
+```
 
 ## Licence
 vmfs-http-sync is licensed under the
