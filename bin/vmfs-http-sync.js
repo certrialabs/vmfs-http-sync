@@ -13,7 +13,8 @@ var argv = require('yargs')
     '<mode>: Mode in which script will be executed. ' +
     'Options are server or watcher.\n' +
     'Server mode means, it will accept filesystem events over http.\n' +
-    'Watcher mode means, it will monitor the given directory and will send events to the server.'
+    'Watcher mode means, it will monitor the given directory and will send events to the server.' +
+    'Local mode means it will monitor the given directory and will sync events to anouther local directory.'
    )
   .option('s', {
     alias: 'server',
@@ -55,7 +56,7 @@ if (argv._.length != 1) {
 
 var env = argv._[0];
 
-if (env != 'watcher' && env != 'server') {
+if (env != 'watcher' && env != 'server' && env != 'local') {
   usage();
 }
 
@@ -85,6 +86,8 @@ if (env === 'server') {
   serverModule.start(server, port, sharedDir, destDir);
 } else if(env === 'watcher') {
   var watcherModule = require('../lib/watcher');
-  watcherModule.start(server, port, sharedDir, argv.retries)
+  watcherModule.start(server, port, sharedDir, argv.retries);
+} else if (env == 'local') {
+  var localModule = require('../lib/local');
+  localModule.start(server, port, sharedDir, destDir);
 }
-
